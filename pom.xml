@@ -99,6 +99,7 @@
         <module>plugin-unstructured-storage-util</module>
         <module>hbase20xsqlreader</module>
         <module>hbase20xsqlwriter</module>
+        <module>shardng-jdbc-util</module>
     </modules>
 
     <dependencyManagement>

@@ -17,6 +17,7 @@ import com.alibaba.datax.plugin.rdbms.reader.util.OriginalConfPretreatmentUtil;
 import com.alibaba.datax.plugin.rdbms.reader.util.PreCheckTask;
 import com.alibaba.datax.plugin.rdbms.reader.util.ReaderSplitUtil;
 import com.alibaba.datax.plugin.rdbms.reader.util.SingleTableSplitUtil;
+import com.alibaba.datax.plugin.rdbms.sharding.DataSourceManager;
 import com.alibaba.datax.plugin.rdbms.util.DBUtil;
 import com.alibaba.datax.plugin.rdbms.util.DBUtilErrorCode;
 import com.alibaba.datax.plugin.rdbms.util.DataBaseType;
@@ -56,6 +57,9 @@ public class CommonRdbmsReader {
 
             LOG.debug("After job init(), job config now is:[\n{}\n]",
                     originalConfig.toJSON());
+
+            // 2020-04-22
+            DataSourceManager.initDataSource(originalConfig);
         }
 
         public void preCheck(Configuration originalConfig,DataBaseType dataBaseType) {
@@ -108,7 +112,8 @@ public class CommonRdbmsReader {
         }
 
         public void destroy(Configuration originalConfig) {
-            // do nothing
+            //2020-04-22
+            DataSourceManager.closeDataSource();
         }
 
     }

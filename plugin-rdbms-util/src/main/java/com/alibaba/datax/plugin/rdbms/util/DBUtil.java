@@ -4,6 +4,7 @@ import com.alibaba.datax.common.exception.DataXException;
 import com.alibaba.datax.common.util.Configuration;
 import com.alibaba.datax.common.util.RetryUtil;
 import com.alibaba.datax.plugin.rdbms.reader.Key;
+import com.alibaba.datax.plugin.rdbms.sharding.DataSourceManager;
 import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -14,6 +15,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sql.DataSource;
 import java.io.File;
 import java.sql.*;
 import java.util.*;
@@ -386,6 +388,13 @@ public final class DBUtil {
 
     private static synchronized Connection connect(DataBaseType dataBaseType,
                                                    String url, Properties prop) {
+        // 2020-04-22
+        Connection conn=connectionFromDatasource();
+        if(conn!=null){
+            return conn;
+        }
+
+
         try {
             Class.forName(dataBaseType.getDriverClassName());
             DriverManager.setLoginTimeout(Constant.TIMEOUT_SECONDS);
@@ -393,6 +402,21 @@ public final class DBUtil {
         } catch (Exception e) {
             throw RdbmsException.asConnException(dataBaseType, e, prop.getProperty("user"), null);
         }
+    }
+
+
+    //有可能为null
+    private static Connection connectionFromDatasource(){
+        DataSource dataSource=DataSourceManager.getDataSource();
+        if(dataSource!=null){
+            try {
+                LOG.debug("通过数据源获取connection...");
+                return dataSource.getConnection();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return null;
     }
 
     /**

@@ -6,6 +6,7 @@ import com.alibaba.datax.common.exception.DataXException;
 import com.alibaba.datax.common.plugin.RecordReceiver;
 import com.alibaba.datax.common.plugin.TaskPluginCollector;
 import com.alibaba.datax.common.util.Configuration;
+import com.alibaba.datax.plugin.rdbms.sharding.DataSourceManager;
 import com.alibaba.datax.plugin.rdbms.util.DBUtil;
 import com.alibaba.datax.plugin.rdbms.util.DBUtilErrorCode;
 import com.alibaba.datax.plugin.rdbms.util.DataBaseType;
@@ -42,6 +43,9 @@ public class CommonRdbmsWriter {
 
             LOG.debug("After job init(), originalConfig now is:[\n{}\n]",
                     originalConfig.toJSON());
+
+            // 2020-04-22
+            DataSourceManager.initDataSource(originalConfig);
         }
 
         /*目前只支持MySQL Writer跟Oracle Writer;检查PreSQL跟PostSQL语法以及insert，delete权限*/
@@ -166,6 +170,8 @@ public class CommonRdbmsWriter {
         }
 
         public void destroy(Configuration originalConfig) {
+            //2020-04-22
+            DataSourceManager.closeDataSource();
         }
 
     }
