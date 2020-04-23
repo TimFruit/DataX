@@ -1,6 +1,6 @@
 package com.alibaba.datax.plugin.sharding.config;
 
-import com.alibaba.canal.otter.canal.client.adapter.config.YmlConfigBinder;
+import com.alibaba.otter.canal.client.adapter.config.YmlConfigBinder;
 import com.alibaba.datax.plugin.sharding.util.DataSourceUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;

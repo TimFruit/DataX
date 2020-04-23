@@ -1,6 +1,8 @@
 package com.alibaba.datax.plugin.rdbms.sharding;
 
 import com.alibaba.datax.common.util.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.io.Closeable;
@@ -11,7 +13,8 @@ import java.io.IOException;
  * @date 20-4-22 下午9:29
  */
 public class DataSourceManager {
-
+    private static final Logger LOG = LoggerFactory
+            .getLogger(DataSourceManager.class);
     private static volatile DataSource dataSource;
 
 
@@ -29,6 +32,7 @@ public class DataSourceManager {
     public static void closeDataSource(){
         if(dataSource!=null && dataSource instanceof Closeable){
             try {
+                LOG.info("关闭数据源...");
                 ((Closeable)dataSource).close();
             } catch (IOException e) {
                 throw new RuntimeException("关闭数据源出现异常", e);

@@ -11,12 +11,16 @@
 
     <artifactId>shardng-jdbc-util</artifactId>
 
+    <properties>
+        <springboot.version>2.2.2.RELEASE</springboot.version>
+        <spring.version>5.2.2.RELEASE</spring.version>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.alibaba.datax</groupId>
             <artifactId>datax-common</artifactId>
-            <version>${datax-project-version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-log4j12</artifactId>
@@ -37,5 +41,27 @@
             <version>2.7.8</version>
             <optional>true</optional>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+
+
     </dependencies>
 </project>
