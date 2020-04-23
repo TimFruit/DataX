@@ -52,8 +52,8 @@
 						"session": [],
 						"preSql": [],
 						"shardingType":"shardingJdbc",
-						"shardingConfigPath":"conf/sharding",
-						"shardingWarning":"使用了sharding后,将使用shardingConfig",
+						"shardingConfigPath":"job/sharding",
+						"shardingWarning":"使用了sharding后,将使用shardingConfig (springboot配置格式 .yml)",
 						"connection": [
 							{
 								"jdbcUrl": "jdbc:mysql://127.0.0.1:3306/ds_lab?useSSL=false&useUnicode=true&characterEncoding=UTF-8",

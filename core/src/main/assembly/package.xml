@@ -33,7 +33,6 @@
         <fileSet>
             <directory>src/main/conf</directory>
             <includes>
-                <include>sharding/*.*</include>
                 <include>*.*</include>
             </includes>
             <outputDirectory>/conf</outputDirectory>
@@ -66,6 +65,7 @@
         <fileSet>
             <directory>src/main/job/</directory>
             <includes>
+                <include>sharding/*.*</include>
                 <include>*.json</include>
             </includes>
             <outputDirectory>/job</outputDirectory>
