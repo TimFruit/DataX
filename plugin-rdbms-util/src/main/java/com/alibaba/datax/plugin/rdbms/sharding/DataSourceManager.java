@@ -19,6 +19,17 @@ public class DataSourceManager {
 
 
     public static void initDataSource(Configuration configuration){
+        if(dataSource==null){
+            synchronized (DataSourceManager.class){
+                if(dataSource==null){
+                     doInitDataSource(configuration);
+                }
+            }
+        }
+    }
+
+
+    private static void doInitDataSource(Configuration configuration){
         dataSource=ShardingJdbcInitializer.initShardingDataSource(configuration);
     }
 
@@ -30,11 +41,22 @@ public class DataSourceManager {
 
 
     public static void closeDataSource(){
+        if(dataSource!=null && dataSource instanceof AutoCloseable){
+            try {
+                LOG.info("关闭数据源...");
+                ((AutoCloseable)dataSource).close();
+                return;
+            } catch (Exception e) {
+                throw new RuntimeException("关闭数据源出现异常", e);
+            }
+        }
+
         if(dataSource!=null && dataSource instanceof Closeable){
             try {
                 LOG.info("关闭数据源...");
                 ((Closeable)dataSource).close();
-            } catch (IOException e) {
+                return;
+            } catch (Exception e) {
                 throw new RuntimeException("关闭数据源出现异常", e);
             }
         }
