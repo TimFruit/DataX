@@ -52,14 +52,14 @@ public class CommonRdbmsReader {
         }
 
         public void init(Configuration originalConfig) {
+            // 2020-04-22
+            DataSourceManager.initDataSource(originalConfig);
 
             OriginalConfPretreatmentUtil.doPretreatment(originalConfig);
 
             LOG.debug("After job init(), job config now is:[\n{}\n]",
                     originalConfig.toJSON());
 
-            // 2020-04-22
-            DataSourceManager.initDataSource(originalConfig);
         }
 
         public void preCheck(Configuration originalConfig,DataBaseType dataBaseType) {

@@ -18,6 +18,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -39,13 +40,14 @@ public class CommonRdbmsWriter {
         }
 
         public void init(Configuration originalConfig) {
+            // 2020-04-22
+            DataSourceManager.initDataSource(originalConfig);
+
             OriginalConfPretreatmentUtil.doPretreatment(originalConfig, this.dataBaseType);
 
             LOG.debug("After job init(), originalConfig now is:[\n{}\n]",
                     originalConfig.toJSON());
 
-            // 2020-04-22
-            DataSourceManager.initDataSource(originalConfig);
         }
 
         /*目前只支持MySQL Writer跟Oracle Writer;检查PreSQL跟PostSQL语法以及insert，delete权限*/
@@ -429,14 +431,46 @@ public class CommonRdbmsWriter {
                             .asString());
                     break;
 
-                case Types.SMALLINT:
+                //----------- 修改了这里 2020-04-22
+                // shardng-jdbc  groovy.lang.MissingMethodException: No signature of method: java.lang.String.mod() is applicable for argument types: (java.lang.Integer) values: [2]
+                // 如果不改，datax默认使用String类型， sharding-proxy||sharding-jdbc会报错
                 case Types.INTEGER:
+                    Long iv=column.asLong();
+                    if(iv==null){
+                        preparedStatement.setString(columnIndex + 1, null);
+                    }else {
+                        preparedStatement.setInt(columnIndex + 1, iv.intValue());
+                    }
+                    break;
                 case Types.BIGINT:
-                case Types.NUMERIC:
+                    Long lv=column.asLong();
+                    if(lv==null){
+                        preparedStatement.setString(columnIndex + 1, null);
+                    }else {
+                        preparedStatement.setLong(columnIndex + 1, lv);
+                    }
+                    break;
                 case Types.DECIMAL:
-                case Types.FLOAT:
-                case Types.REAL:
+                    BigDecimal bgv=column.asBigDecimal();
+                    if(bgv==null){
+                        preparedStatement.setString(columnIndex + 1, null);
+                    }else {
+                        preparedStatement.setBigDecimal(columnIndex + 1, bgv);
+                    }
+                    break;
                 case Types.DOUBLE:
+                case Types.FLOAT:
+                    Double dv=column.asDouble();
+                    if(dv==null){
+                        preparedStatement.setString(columnIndex + 1, null);
+                    }else {
+                        preparedStatement.setDouble(columnIndex + 1, dv);
+                    }
+                    break;
+                // ----------
+                case Types.SMALLINT:
+                case Types.NUMERIC:
+                case Types.REAL:
                     String strValue = column.asString();
                     if (emptyAsNull && "".equals(strValue)) {
                         preparedStatement.setString(columnIndex + 1, null);
@@ -444,6 +478,22 @@ public class CommonRdbmsWriter {
                         preparedStatement.setString(columnIndex + 1, strValue);
                     }
                     break;
+
+//                case Types.SMALLINT:
+//                case Types.INTEGER:
+//                case Types.BIGINT:
+//                case Types.NUMERIC:
+//                case Types.DECIMAL:
+//                case Types.FLOAT:
+//                case Types.REAL:
+//                case Types.DOUBLE:
+//                    String strValue = column.asString();
+//                    if (emptyAsNull && "".equals(strValue)) {
+//                        preparedStatement.setString(columnIndex + 1, null);
+//                    } else {
+//                        preparedStatement.setString(columnIndex + 1, strValue);
+//                    }
+//                    break;
 
                 //tinyint is a little special in some database like mysql {boolean->tinyint(1)}
                 case Types.TINYINT:

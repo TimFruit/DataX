@@ -1,0 +1,68 @@
+{
+    "job": {
+        "setting": {
+            "speed": {
+				"channelDescription":"配置channel，可以使用任务切分",
+				"channel": 5
+            },
+            "errorLimit": {
+                "record": 0,
+                "percentage": 0.02
+            }
+        },
+        "content": [
+            {
+                "reader": {
+					"name": "mysqlreader",
+					"parameter": {
+						"username": "root",
+						"password": "root",
+						"column": [
+							"order_id",
+							"user_id",
+							"address_id",
+							"status",
+							"create_time",
+							"update_time"
+						],
+						"connection": [
+							{
+							"jdbcUrl": ["jdbc:mysql://127.0.0.1:3306/db_lab?useSSL=false&useUnicode=true&characterEncoding=UTF-8"],
+							"table": ["t_order"]
+							}
+						],
+						"splitPk": "order_id",
+						"where": "order_id<35000"
+					}
+				},
+                "writer": {
+					"name": "mysqlwriter",
+					"parameter": {
+						"username": "root",
+						"password": "root",
+						"writeMode": "replace",
+						"column": [
+							"order_id",
+							"user_id",
+							"address_id",
+							"status",
+							"create_time",
+							"update_time"
+						],
+						"session": [],
+						"preSql": [],
+						"shardingType":"shardingJdbc",
+						"shardingConfigPath":"conf/sharding",
+						"shardingWarning":"使用了sharding后,将使用shardingConfig",
+						"connection": [
+							{
+								"jdbcUrl": "jdbc:mysql://127.0.0.1:3306/ds_lab?useSSL=false&useUnicode=true&characterEncoding=UTF-8",
+								"table": ["t_order"]
+							}
+						]
+					}
+				}
+            }
+        ]
+    }
+}
